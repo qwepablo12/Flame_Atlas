@@ -13,8 +13,9 @@ from pathlib import Path
 import anthropic
 from dotenv import load_dotenv
 
-from .parse_pdf import document_text, pdf_pages
+from .parse_pdf import document_text, pdf_pages, select_context
 from .schema import ExtractionResult, TestRecord
+from .tables import document_tables, to_markdown
 
 load_dotenv()
 
@@ -52,7 +53,7 @@ def extract_from_text(text: str, meta: dict | None = None, client: anthropic.Ant
     hint = "\n".join(f"{k}: {v}" for k, v in meta.items() if v)
     msg = client.messages.create(
         model=MODEL,
-        max_tokens=8000,
+        max_tokens=12000,
         system=SYSTEM,
         tools=[TOOL],
         tool_choice={"type": "tool", "name": "save_tests"},
@@ -67,16 +68,45 @@ def extract_from_text(text: str, meta: dict | None = None, client: anthropic.Ant
     return result.tests
 
 
+MAX_WINDOWS = int(os.getenv("FLAMEATLAS_MAX_WINDOWS", "6"))
+
+
+def build_windows(pdf: Path) -> list[str]:
+    """Text windows to send to the LLM. Long reports (e.g. 144-page BASS-II summary)
+    are reduced to the data-rich pages plus clean markdown tables."""
+    pages = pdf_pages(pdf)
+    if len(document_text(pages, 10**9)) < 500:
+        raise ValueError(f"{pdf.name}: almost no text extracted (scanned PDF?)")
+    tables_md: dict[int, str] = {}
+    if len(pages) > 30:   # only worth it for long reports with test matrices
+        for t in document_tables(pdf):
+            if len(t["rows"]) >= 3:
+                md = to_markdown(t["rows"])
+                tables_md[t["page"]] = tables_md.get(t["page"], "") + md + "\n"
+    return select_context(pages, tables_md)[:MAX_WINDOWS]
+
+
+def _dedupe(tests: list[TestRecord]) -> list[TestRecord]:
+    seen, out = set(), []
+    for t in tests:
+        key = (t.investigation, (t.fuel or "").lower(), t.o2_percent, t.pressure_kpa,
+               t.flow_speed_cm_s, t.gravity_g, t.outcome)
+        if key not in seen:
+            seen.add(key)
+            out.append(t)
+    return out
+
+
 def extract_from_pdf(pdf: str | Path, meta: dict | None = None, use_cache: bool = True) -> list[TestRecord]:
     pdf = Path(pdf)
     cache = _cache_path(pdf)
     if use_cache and cache.exists():
         return [TestRecord.model_validate(r) for r in json.loads(cache.read_text())]
-    pages = pdf_pages(pdf)
-    text = document_text(pages)
-    if len(text) < 500:
-        raise ValueError(f"{pdf.name}: almost no text extracted (scanned PDF?)")
-    tests = extract_from_text(text, meta)
+    client = anthropic.Anthropic()
+    tests: list[TestRecord] = []
+    for window in build_windows(pdf):
+        tests += extract_from_text(window, meta, client)
+    tests = _dedupe(tests)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps([t.model_dump(mode="json") for t in tests], ensure_ascii=False, indent=1))
     return tests

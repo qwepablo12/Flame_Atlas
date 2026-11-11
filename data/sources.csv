@@ -1,2 +1,9 @@
 investigation,title,url,doc_type,year,local_file,status,notes
-BASS-II,EXAMPLE ROW — replace with a real paper title,https://psi.nasa.gov/...,paper,,bass2_example.pdf,todo,doc_type: paper / report / dataset / video
+BASS-II,Burning and Suppression of Solids-II (BASS-II) Summary Report (NASA/TM-20210011385),https://ntrs.nasa.gov/citations/20210011385,report,2021,TM-20210011385.pdf,downloaded,144 pages; full test matrices in Appendix A (p.111-121)
+BASS-II,Combustion of Solids in Microgravity: Results from the BASS-II Experiment,https://ntrs.nasa.gov/citations/20160000593,presentation,2014,20160000593.pdf,downloaded,
+BASS-II,Results from On-Board CSA-CP and CDM Sensor Readings During the BASS-II Experiment in the MSG (ICES-2015-196),https://ntrs.nasa.gov/citations/20150019858,paper,2015,20150019858.pdf,downloaded,O2/CO/CO2 sensor readings
+FLEX,Detailed Results From the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011 (NASA/TP-2015-216046),https://ntrs.nasa.gov/citations/20150023456,report,2015,20150023456.pdf,downloaded,314 pages; data tables p.15-21
+FLEX,Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity,https://ntrs.nasa.gov/citations/20130014061,paper,2013,20130014061.pdf,downloaded,
+Saffire,Results of Large-Scale Spacecraft Flammability Tests,https://ntrs.nasa.gov/citations/20170008805,presentation,2017,20170008805.pdf,downloaded,
+Saffire,Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-manned Spacecraft,https://ntrs.nasa.gov/citations/20180005168,presentation,2018,20180005168.pdf,downloaded,
+Saffire-VI,Preliminary Results from the Saffire VI Experiment (ICES 2024),https://ntrs.nasa.gov/citations/20240007488,presentation,2024,Saffire ICES 2024 Saffire presentation072124small.pdf,downloaded,Saffire-VI is beyond the I-III named in the challenge but still relevant

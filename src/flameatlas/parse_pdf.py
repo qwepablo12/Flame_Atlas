@@ -42,6 +42,54 @@ def document_text(pages: list[str], max_chars: int = 120_000) -> str:
     return "\n\n".join(parts)[:max_chars]
 
 
+# Words that signal a page carries test conditions or results
+SIGNALS = re.compile(
+    r"test matrix|table \d|oxygen|O2|kPa|psi|atm\b|cm/s|mm/s|flow (velocity|speed)|extinction|"
+    r"extinguish|ignit|spread rate|flammab|diluent|helium|CO2|droplet|burning rate",
+    re.I,
+)
+
+
+def page_scores(pages: list[str]) -> list[int]:
+    return [len(SIGNALS.findall(p)) for p in pages]
+
+
+def select_context(pages: list[str], tables_md: dict[int, str] | None = None,
+                   max_chars: int = 110_000) -> list[str]:
+    """For long documents: build one or more context windows (each <= max_chars) from
+    the first 3 pages (abstract/intro), the pages richest in test data, and clean
+    markdown tables. Short documents come back as a single full-text window."""
+    tables_md = tables_md or {}
+    full = document_text(pages, max_chars=10**9)
+    if len(full) <= max_chars and not tables_md:
+        return [full]
+
+    scores = page_scores(pages)
+    ranked = sorted(range(len(pages)), key=lambda i: -scores[i])
+    chosen = sorted(set(range(min(3, len(pages)))) | {i for i in ranked if scores[i] >= 4})
+
+    blocks = []
+    for i in chosen:
+        pno = i + 1
+        if pno in tables_md:      # rotated table pages: the clean table replaces scrambled text
+            blocks.append(f"[page {pno} — table]\n{tables_md[pno]}")
+        else:
+            blocks.append(f"[page {pno}]\n{clean(pages[i])}")
+    for pno, md in tables_md.items():
+        if pno - 1 not in chosen:
+            blocks.append(f"[page {pno} — table]\n{md}")
+
+    windows, cur = [], ""
+    for b in blocks:
+        if cur and len(cur) + len(b) > max_chars:
+            windows.append(cur)
+            cur = ""
+        cur += b[:max_chars] + "\n\n"
+    if cur:
+        windows.append(cur)
+    return windows
+
+
 if __name__ == "__main__":
     import sys
 
