@@ -1,4 +1,4 @@
-# FlameAtlas 🔥
+# FlameAtlas 
 
 AI-powered dashboard that summarizes, ranks and interprets NASA microgravity combustion
 experiments (PSI database) to deliver fire safety insights for crewed spacecraft, Moon bases
