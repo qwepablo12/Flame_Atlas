@@ -1,0 +1,19 @@
+investigation,full_name,category,phase,hardware,platform,priority,notes
+BASS,Burning and Suppression of Solids,prevention,solid,MSG (SPICE flow duct),ISS,1,Solid materials flammability; named in challenge
+BASS-II,Burning and Suppression of Solids II,prevention,solid,MSG (SPICE flow duct),ISS,1,Follow-up to BASS; fabrics/plastics; flow speed and O2 varied
+Saffire-I,Spacecraft Fire Safety Demonstration I,prevention,solid,Cygnus,Cygnus,1,Large-scale fabric burn after cargo departs ISS
+Saffire-II,Spacecraft Fire Safety Demonstration II,prevention,solid,Cygnus,Cygnus,1,Multiple material samples
+Saffire-III,Spacecraft Fire Safety Demonstration III,prevention,solid,Cygnus,Cygnus,1,
+SAME,Smoke and Aerosol Measurement Experiment,detection,aerosol,MSG,ISS,1,Smoke detection
+SAME-R,Smoke and Aerosol Measurement Experiment Reflight,detection,aerosol,MSG,ISS,1,
+FLEX,Flame Extinguishment Experiment,suppression,liquid,CIR/MDCA,ISS,1,Droplets; CO2 and He dilution
+FLEX-2,Flame Extinguishment Experiment 2,suppression,liquid,CIR/MDCA,ISS,1,
+CFI,Cool Flames Investigation,fundamental,liquid,CIR/MDCA,ISS,2,Droplet cool flames
+ACME-BRE,ACME Burning Rate Emulator,prevention,gas,CIR/ACME,ISS,1,Gaseous fuels emulating material flammability in still air
+ACME-CFI-G,ACME Cool Flames Investigation with Gases,fundamental,gas,CIR/ACME,ISS,1,Highest O2 in micro-g (up to 85% from burner)
+ACME-E-FIELD,ACME Electric-Field Effects on Laminar Diffusion Flames,fundamental,gas,CIR/ACME,ISS,2,Electric field mimics partial gravity
+ACME-other,Other ACME experiments (fill in names),fundamental,gas,CIR/ACME,ISS,3,ACME had six experiments total — list the remaining three
+SPICE,Smoke Point In Co-flow Experiment,fundamental,gas,MSG (SPICE flow duct),ISS,2,
+SLICE,Structure & Liftoff In Combustion Experiment,fundamental,gas,MSG (SPICE flow duct),ISS,2,
+DAFT,Dust and Aerosol Measurement Feasibility Test,detection,aerosol,ISS cabin,ISS,3,Same instrument as SAME
+DAFT-2,Dust and Aerosol Measurement Feasibility Test 2,detection,aerosol,ISS cabin,ISS,3,
