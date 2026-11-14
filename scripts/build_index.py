@@ -14,7 +14,7 @@ from flameatlas.parse_pdf import chunk_pages, pdf_pages  # noqa: E402
 
 
 def main():
-    src = pd.read_csv(ROOT / "data/sources.csv").fillna("")
+    src = pd.read_csv(ROOT / "data/sources.csv", dtype=str).fillna("")
     out = ROOT / "data/processed/chunks.jsonl"
     out.parent.mkdir(parents=True, exist_ok=True)
     n = 0

@@ -27,7 +27,7 @@ def main():
     ap.add_argument("--no-cache", action="store_true")
     args = ap.parse_args()
 
-    src = pd.read_csv(ROOT / "data/sources.csv").fillna("")
+    src = pd.read_csv(ROOT / "data/sources.csv", dtype=str).fillna("")
     src = src[src["local_file"] != ""]
     # smallest documents first: quick feedback on the first runs
     src = src.assign(_size=src["local_file"].map(lambda f: (ROOT / "data/raw" / f).stat().st_size
@@ -57,7 +57,8 @@ def main():
     df["investigation"] = df["investigation"].map(canonical)
     cat = load_catalog()
     if not cat.empty:   # link every test to its PSI dataset (PSI asks users to cite it)
-        links = cat.set_index("acronym")[["psi_id", "url"]]
+        links = (cat[cat["acronym"] != ""].drop_duplicates("acronym")
+                 .set_index("acronym")[["psi_id", "url"]])
         df["psi_id"] = df["investigation"].map(links["psi_id"]).fillna("")
         df["psi_url"] = df["investigation"].map(links["url"]).fillna("")
     df.insert(0, "test_id", [f"T{i:04d}" for i in range(1, len(df) + 1)])

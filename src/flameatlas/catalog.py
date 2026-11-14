@@ -41,10 +41,11 @@ KNOWN = {
 ALIASES = {
     r"^saffire[-\s]?(1|i)$": "SAFFIRE-I", r"^saffire[-\s]?(2|ii)$": "SAFFIRE-II",
     r"^saffire[-\s]?(3|iii)$": "SAFFIRE-III", r"^saffire[-\s]?(6|vi)$": "SAFFIRE-VI",
+    r"^saffire[-\s]?(4|iv)\s*(/|and|&|-)?\s*(5|v)?$": "SAFFIRE-IV/V", r"^saffire[-\s]?(5|v)$": "SAFFIRE-IV/V",
     r"^bass[-\s]?(2|ii)$": "BASS-II", r"^bass$": "BASS",
     r"^flex[-\s]?2$": "FLEX-2", r"^flex$": "FLEX",
-    r"^same[-\s]?r$": "SAME-R", r"^same$": "SAME",
-    r"^acme.*bre|burning rate emulator": "ACME BRE",
+    r"^same[-\s]?(r|2|reflight)$": "SAME-R", r"^same$": "SAME",
+    r"^acme.*bre|^bre$|burning rate emulator": "ACME BRE",
     r"^acme.*cfi[-\s]?g": "ACME CFI-G",
     r"^acme.*flame design": "ACME/Flame Design",
     r"^acme.*s[-\s]?flame|spherical diffusion": "ACME s-Flame",
