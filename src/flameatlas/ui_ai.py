@@ -24,7 +24,7 @@ def _has_key() -> bool:
 
 
 def _cited_tests(markdown: str, df: pd.DataFrame | None):
-    """Table of the test records the answer cites ([T0012] ...) — click-through traceability."""
+    """Table of the test records cited in an answer."""
     import re
     if df is None or "test_id" not in df:
         return
@@ -58,7 +58,7 @@ def _cached_insight(top_json: str, mission: str, target_json: str) -> dict:
 
 
 def render_insight(top: pd.DataFrame, mission: str, target: dict, df: pd.DataFrame | None = None):
-    st.subheader("AI insight")
+    st.markdown("#### Insight for the selected environment")
     if not _has_key():
         st.info("Add ANTHROPIC_API_KEY to .env to enable AI insights.")
         return
@@ -77,7 +77,7 @@ def render_insight(top: pd.DataFrame, mission: str, target: dict, df: pd.DataFra
 
 
 def render_chat(df: pd.DataFrame):
-    st.subheader("Ask the experiments")
+    st.markdown("#### Ask a question")
     if not _has_key():
         st.info("Add ANTHROPIC_API_KEY to .env to enable Q&A.")
         return
@@ -88,7 +88,7 @@ def render_chat(df: pd.DataFrame):
     examples = ["Which materials kept burning at the lowest airflow?",
                 "Does helium or CO2 suppress droplet flames better?",
                 "What does Saffire tell us about large fires in spacecraft?"]
-    pick = st.pills("Try:", examples, selection_mode="single") if hasattr(st, "pills") else None
+    pick = st.pills("Examples", examples, selection_mode="single") if hasattr(st, "pills") else None
     q = st.chat_input("Ask about microgravity fire safety...") or pick
     if q and (not hist or hist[-1]["content"] != q):
         hist.append({"role": "user", "content": q})
@@ -107,7 +107,7 @@ def render_chat(df: pd.DataFrame):
 
 
 def render_compare(df: pd.DataFrame):
-    st.subheader("Compare investigations")
+    st.markdown("#### Compare two investigations")
     invs = sorted(df["investigation"].dropna().unique())
     if len(invs) < 2:
         st.caption("Need at least two investigations in the data.")
