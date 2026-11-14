@@ -55,7 +55,7 @@ with c2:
 st.divider()
 tab1, tab2, tab3, tab4 = st.tabs(["AI insight", "Ask", "Compare", "Investigations"])
 with tab1:
-    render_insight(top, preset, target)
+    render_insight(top, preset, target, df)
 with tab2:
     render_chat(df)
 with tab3:

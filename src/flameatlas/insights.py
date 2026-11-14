@@ -32,7 +32,10 @@ def _client() -> anthropic.Anthropic:
 
 
 def _text(msg) -> str:
-    return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text").strip()
+    out = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text").strip()
+    if getattr(msg, "stop_reason", "") == "max_tokens":
+        out += "\n\n*(answer truncated)*"
+    return out
 
 
 def _rows(df: pd.DataFrame, n: int = 12) -> str:
@@ -71,7 +74,7 @@ Write the insight card in markdown with exactly these sections:
 **What the experiments show** — 3 bullets max.
 **Gaps & bounds** — what is missing (e.g. partial gravity, untested O2/pressure) and how 0 g / 1 g data bound it.
 **Design implications** — 2 bullets for material selection, airflow, detection or suppression."""
-    msg = client.messages.create(model=MODEL, max_tokens=1200, system=GUARD,
+    msg = client.messages.create(model=MODEL, max_tokens=3000, system=GUARD,
                                  messages=[{"role": "user", "content": prompt}])
     return {"markdown": _text(msg), "sources": refs}
 
@@ -96,7 +99,7 @@ Source passages:
 
 Answer in 3-8 sentences or a short list, with citations."""
     msgs = (history or [])[-6:] + [{"role": "user", "content": user}]
-    msg = client.messages.create(model=MODEL, max_tokens=900, system=GUARD, messages=msgs)
+    msg = client.messages.create(model=MODEL, max_tokens=2500, system=GUARD, messages=msgs)
     return {"markdown": _text(msg), "sources": refs}
 
 
@@ -113,6 +116,6 @@ Test records:
 
 Source passages:
 {passages or '(none)'}"""
-    msg = client.messages.create(model=MODEL, max_tokens=1400, system=GUARD,
+    msg = client.messages.create(model=MODEL, max_tokens=3500, system=GUARD,
                                  messages=[{"role": "user", "content": prompt}])
     return {"markdown": _text(msg), "sources": refs}

@@ -30,6 +30,26 @@ def _has_key() -> bool:
     return False
 
 
+def _cited_tests(markdown: str, df: pd.DataFrame | None):
+    """Table of the test records the answer cites ([T0012] ...) — click-through traceability."""
+    import re
+    if df is None or "test_id" not in df:
+        return
+    ids = list(dict.fromkeys(re.findall(r"T\d{4}", markdown)))
+    sub = df[df["test_id"].isin(ids)]
+    if sub.empty:
+        return
+    cols = [c for c in ["test_id", "investigation", "fuel", "o2_percent", "pressure_kpa", "flow_speed_cm_s",
+                        "gravity_g", "outcome", "key_finding", "quote", "page", "psi_url", "source_url"] if c in sub]
+    with st.expander(f"Cited tests ({len(sub)})"):
+        cfg = {}
+        if "psi_url" in cols:
+            cfg["psi_url"] = st.column_config.LinkColumn("PSI", display_text="open")
+        if "source_url" in cols:
+            cfg["source_url"] = st.column_config.LinkColumn("Paper", display_text="open")
+        st.dataframe(sub[cols], hide_index=True, column_config=cfg)
+
+
 def _sources(refs: list[dict]):
     if not refs:
         return
@@ -44,7 +64,7 @@ def _cached_insight(top_json: str, mission: str, target_json: str) -> dict:
     return insights.mission_insight(pd.read_json(StringIO(top_json)), mission, json.loads(target_json))
 
 
-def render_insight(top: pd.DataFrame, mission: str, target: dict):
+def render_insight(top: pd.DataFrame, mission: str, target: dict, df: pd.DataFrame | None = None):
     st.subheader("AI insight")
     if not _has_key():
         st.info("Add ANTHROPIC_API_KEY to .env to enable AI insights.")
@@ -59,6 +79,7 @@ def render_insight(top: pd.DataFrame, mission: str, target: dict):
     if key in st.session_state:
         res = st.session_state[key]
         st.markdown(res["markdown"])
+        _cited_tests(res["markdown"], df if df is not None else top)
         _sources(res["sources"])
 
 
@@ -85,6 +106,7 @@ def render_chat(df: pd.DataFrame):
                 try:
                     res = insights.ask(q, df, history=hist[:-1])
                     st.markdown(res["markdown"])
+                    _cited_tests(res["markdown"], df)
                     _sources(res["sources"])
                     hist.append({"role": "assistant", "content": res["markdown"]})
                 except Exception as e:
@@ -105,6 +127,7 @@ def render_compare(df: pd.DataFrame):
             try:
                 res = insights.compare_investigations(df, a, b)
                 st.markdown(res["markdown"])
+                _cited_tests(res["markdown"], df)
                 _sources(res["sources"])
             except Exception as e:
                 st.error(f"AI call failed: {e}")
