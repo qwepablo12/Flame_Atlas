@@ -15,6 +15,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from flameatlas.extract import extract_from_pdf  # noqa: E402
+from flameatlas.catalog import canonical, load_catalog  # noqa: E402
 from flameatlas.schema import CSV_COLUMNS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +29,10 @@ def main():
 
     src = pd.read_csv(ROOT / "data/sources.csv").fillna("")
     src = src[src["local_file"] != ""]
+    # smallest documents first: quick feedback on the first runs
+    src = src.assign(_size=src["local_file"].map(lambda f: (ROOT / "data/raw" / f).stat().st_size
+                                                 if (ROOT / "data/raw" / f).exists() else 0))
+    src = src.sort_values("_size")
     if args.limit:
         src = src.head(args.limit)
 
@@ -49,6 +54,12 @@ def main():
     out = ROOT / "data/processed/experiments.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(rows, columns=CSV_COLUMNS)
+    df["investigation"] = df["investigation"].map(canonical)
+    cat = load_catalog()
+    if not cat.empty:   # link every test to its PSI dataset (PSI asks users to cite it)
+        links = cat.set_index("acronym")[["psi_id", "url"]]
+        df["psi_id"] = df["investigation"].map(links["psi_id"]).fillna("")
+        df["psi_url"] = df["investigation"].map(links["url"]).fillna("")
     df.insert(0, "test_id", [f"T{i:04d}" for i in range(1, len(df) + 1)])
     df.to_csv(out, index=False)
     print(f"\n{len(df)} tests from {len(src) - len(failed)} documents -> {out}")

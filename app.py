@@ -10,6 +10,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 from flameatlas.missions import MISSIONS  # noqa: E402
 from flameatlas.rank import rank  # noqa: E402
+from flameatlas.ui_ai import render_chat, render_compare, render_insight, render_investigations  # noqa: E402
 
 DATA = Path("data/processed")
 real, mock = DATA / "experiments.csv", DATA / "experiments_mock.csv"
@@ -49,4 +50,15 @@ with c2:
     fig = px.scatter(solid, x="o2_percent", y="spread_rate_mm_s", color="investigation",
                      hover_data=["fuel", "flow_speed_cm_s"])
     fig.add_vline(x=o2, line_dash="dash")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
+
+st.divider()
+tab1, tab2, tab3, tab4 = st.tabs(["AI insight", "Ask", "Compare", "Investigations"])
+with tab1:
+    render_insight(top, preset, target)
+with tab2:
+    render_chat(df)
+with tab3:
+    render_compare(df)
+with tab4:
+    render_investigations(df)

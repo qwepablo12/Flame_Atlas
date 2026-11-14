@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# FlameAtlas
+data/raw/*.pdf
+data/cache/
+.DS_Store
