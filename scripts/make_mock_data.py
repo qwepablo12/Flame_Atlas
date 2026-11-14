@@ -1,6 +1,4 @@
-"""Generate data/processed/experiments_mock.csv so the dashboard can be built
-before real extraction is ready. ALL VALUES ARE FAKE (source_title = 'MOCK').
-Same columns as the real experiments.csv, so the UI just swaps the file later."""
+"""Generate data/processed/experiments_mock.csv so the dashboard can be built before real extraction is ready."""
 from __future__ import annotations
 
 import random
@@ -10,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from flameatlas.schema import CSV_COLUMNS  # noqa: E402
+from flameatlas.schema import CSV_COLUMNS
 
 random.seed(42)
 ROOT = Path(__file__).resolve().parents[1]

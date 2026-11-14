@@ -1,9 +1,4 @@
-"""PSI investigation catalog + canonical investigation names.
-
-data/psi_catalog.csv comes from scripts/parse_psi_catalog.py (the PSI combustion search page).
-We enrich it with an acronym, fire-safety category and a relevance tier based on the
-challenge text (prevention / detection / suppression investigations named there rank highest).
-"""
+"""PSI investigation catalog + canonical investigation names."""
 from __future__ import annotations
 
 import re
@@ -13,7 +8,6 @@ import pandas as pd
 
 CATALOG = Path("data/psi_catalog.csv")
 
-# acronym -> (category, hardware, relevance tier 1=core fire safety, 2=related, 3=indirect)
 KNOWN = {
     "BASS":          ("prevention",  "MSG (SPICE flow duct)", 1),
     "BASS-II":       ("prevention",  "MSG (SPICE flow duct)", 1),
@@ -37,7 +31,6 @@ KNOWN = {
     "STDCE-1":       ("fundamental", "Space Shuttle",         3),
 }
 
-# messy names produced by the LLM -> canonical acronym
 ALIASES = {
     r"^saffire[-\s]?(1|i)$": "SAFFIRE-I", r"^saffire[-\s]?(2|ii)$": "SAFFIRE-II",
     r"^saffire[-\s]?(3|iii)$": "SAFFIRE-III", r"^saffire[-\s]?(6|vi)$": "SAFFIRE-VI",

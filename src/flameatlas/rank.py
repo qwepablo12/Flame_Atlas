@@ -1,18 +1,13 @@
-"""Rank tests by how close their conditions are to a crew environment.
-
-Score in [0, 1]: 1 = same conditions. Missing values get a neutral penalty,
-so well-documented tests rank above vague ones.
-"""
+"""Rank tests by how close their conditions are to a crew environment."""
 from __future__ import annotations
 
 import math
 
 import pandas as pd
 
-# How far apart two values can be before similarity drops a lot
 SCALES = {"o2_percent": 10.0, "pressure_kpa": 30.0, "flow_speed_cm_s": 20.0, "gravity_g": 0.5}
 WEIGHTS = {"o2_percent": 0.4, "pressure_kpa": 0.25, "flow_speed_cm_s": 0.15, "gravity_g": 0.2}
-MISSING = 0.35   # similarity used when the test does not report a value
+MISSING = 0.35
 
 
 def _sim(a, b, scale) -> float:

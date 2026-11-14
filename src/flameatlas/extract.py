@@ -1,10 +1,4 @@
-"""LLM extraction: document text -> list[TestRecord].
-
-Claude answers with plain JSON; we parse and validate every record with pydantic,
-coercing sloppy values ("21%", "1 atm" already converted, bad enum labels) and dropping
-records that still fail. (Server-side structured outputs timed out compiling our schema.)
-Results are cached per file, so re-runs cost nothing.
-"""
+"""LLM extraction: document text -> list[TestRecord]."""
 from __future__ import annotations
 
 import hashlib
@@ -27,7 +21,6 @@ CACHE_DIR = Path(os.getenv("FLAMEATLAS_CACHE", "data/cache"))
 
 
 def make_client() -> anthropic.Anthropic:
-    # long timeout + retries: big reports and shaky hackathon Wi-Fi
     return anthropic.Anthropic(timeout=600, max_retries=4)
 
 SYSTEM = """You extract structured data from NASA microgravity combustion papers and reports
@@ -124,7 +117,7 @@ def extract_from_text(text: str, meta: dict | None = None, client: anthropic.Ant
             bad += 1
     if bad:
         print(f"    (dropped {bad} malformed records)")
-    for t in tests:                          # metadata from sources.csv wins
+    for t in tests:
         t.source_title = meta.get("title") or t.source_title
         t.source_url = meta.get("url") or t.source_url
         t.investigation = t.investigation or meta.get("investigation", "")
@@ -135,13 +128,12 @@ MAX_WINDOWS = int(os.getenv("FLAMEATLAS_MAX_WINDOWS", "6"))
 
 
 def build_windows(pdf: Path) -> list[str]:
-    """Text windows to send to the LLM. Long reports (e.g. 144-page BASS-II summary)
-    are reduced to the data-rich pages plus clean markdown tables."""
+    """Text windows to send to the LLM."""
     pages = pdf_pages(pdf)
     if len(document_text(pages, 10**9)) < 500:
         raise ValueError(f"{pdf.name}: almost no text extracted (scanned PDF?)")
     tables_md: dict[int, str] = {}
-    if len(pages) > 30:   # only worth it for long reports with test matrices
+    if len(pages) > 30:
         for t in document_tables(pdf):
             if len(t["rows"]) >= 3:
                 md = to_markdown(t["rows"])

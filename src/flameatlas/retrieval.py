@@ -1,8 +1,4 @@
-"""Lightweight search over document chunks (BM25, pure Python — no vector DB to install).
-
-Build once:  python scripts/build_index.py   -> data/processed/chunks.jsonl
-Then:        search("does helium suppress droplet flames?", k=8)
-"""
+"""Lightweight search over document chunks (BM25, pure Python — no vector DB to install)."""
 from __future__ import annotations
 
 import json
@@ -47,7 +43,6 @@ class BM25:
 
 @lru_cache(maxsize=1)
 def _index(path: str = str(CHUNKS)):
-    # split on "\n" only: str.splitlines() also breaks on unicode separators found inside PDF text
     chunks = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").split("\n") if line.strip()]
     return chunks, BM25([c["text"] for c in chunks])
 

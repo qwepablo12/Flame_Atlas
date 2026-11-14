@@ -1,10 +1,4 @@
-"""Data schema for FlameAtlas.
-
-One row = one test condition (one burn) from one investigation.
-A single paper usually describes several tests, so extraction returns a list.
-This file is the contract between the data/AI side and the dashboard side:
-change it only after agreeing with the whole team.
-"""
+"""Data schema for FlameAtlas."""
 from __future__ import annotations
 
 from enum import Enum
@@ -15,26 +9,26 @@ from pydantic import BaseModel, Field
 
 class Phase(str, Enum):
     solid = "solid"
-    liquid = "liquid"      # droplets (FLEX, FLEX-2, CFI)
-    gas = "gas"            # gaseous flames (ACME, SPICE, SLICE)
-    aerosol = "aerosol"    # smoke / dust detection (SAME, SAME-R, DAFT)
+    liquid = "liquid"
+    gas = "gas"
+    aerosol = "aerosol"
     unknown = "unknown"
 
 
 class Category(str, Enum):
-    prevention = "prevention"      # flammability of materials, limits
-    detection = "detection"        # smoke / aerosol sensing
-    suppression = "suppression"    # extinguishment, diluents (CO2, He)
-    fundamental = "fundamental"    # basic flame physics
+    prevention = "prevention"
+    detection = "detection"
+    suppression = "suppression"
+    fundamental = "fundamental"
     unknown = "unknown"
 
 
 class Outcome(str, Enum):
-    ignited_spread = "ignited_spread"      # flame established and spread
+    ignited_spread = "ignited_spread"
     ignited_no_spread = "ignited_no_spread"
     no_ignition = "no_ignition"
-    extinguished = "extinguished"          # flame went out during test
-    detected = "detected"                  # detection test, aerosol measured
+    extinguished = "extinguished"
+    detected = "detected"
     other = "other"
     unknown = "unknown"
 
@@ -75,5 +69,4 @@ class ExtractionResult(BaseModel):
     tests: list[TestRecord]
 
 
-# Column order for experiments.csv
 CSV_COLUMNS = list(TestRecord.model_fields.keys())

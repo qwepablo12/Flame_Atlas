@@ -1,11 +1,4 @@
-"""Ready-made Streamlit blocks for the AI features. The product side drops them
-into app.py wherever they fit:
-
-    from flameatlas.ui_ai import render_insight, render_chat, render_compare
-    render_insight(top, preset, target)
-    render_chat(df)
-    render_compare(df)
-"""
+"""Streamlit blocks for the AI features: insight, Q&A, compare, investigations."""
 from __future__ import annotations
 
 import json
@@ -21,7 +14,7 @@ from . import insights
 def _has_key() -> bool:
     if os.getenv("ANTHROPIC_API_KEY"):
         return True
-    try:  # Streamlit Cloud secrets
+    try:
         if "ANTHROPIC_API_KEY" in st.secrets:
             os.environ["ANTHROPIC_API_KEY"] = st.secrets["ANTHROPIC_API_KEY"]
             return True
@@ -134,8 +127,7 @@ def render_compare(df: pd.DataFrame):
 
 
 def render_investigations(df: pd.DataFrame):
-    """Catalog of all PSI combustion investigations, ranked by fire-safety relevance,
-    with how many tests FlameAtlas extracted for each."""
+    """Catalog of PSI combustion investigations ranked by fire-safety relevance."""
     from .catalog import load_catalog
     cat = load_catalog()
     if cat.empty:

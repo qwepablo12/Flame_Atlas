@@ -1,6 +1,4 @@
-"""Table extraction with PyMuPDF (handles rotated/landscape test matrices,
-e.g. BASS-II Appendix A). Tables are turned into compact markdown so the LLM
-gets clean rows instead of scrambled page text."""
+"""Table extraction with PyMuPDF, including rotated test-matrix pages."""
 from __future__ import annotations
 
 import csv

@@ -1,10 +1,4 @@
-"""Run extraction over every PDF listed in data/sources.csv that has a local_file.
-
-Usage:
-    python scripts/extract_all.py            # all sources with a downloaded PDF
-    python scripts/extract_all.py --limit 3  # quick test
-Output: data/processed/experiments.csv
-"""
+"""Run extraction over every PDF listed in data/sources.csv that has a local_file."""
 from __future__ import annotations
 
 import argparse
@@ -14,9 +8,9 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from flameatlas.extract import extract_from_pdf  # noqa: E402
-from flameatlas.catalog import canonical, load_catalog  # noqa: E402
-from flameatlas.schema import CSV_COLUMNS  # noqa: E402
+from flameatlas.extract import extract_from_pdf
+from flameatlas.catalog import canonical, load_catalog
+from flameatlas.schema import CSV_COLUMNS
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -29,7 +23,6 @@ def main():
 
     src = pd.read_csv(ROOT / "data/sources.csv", dtype=str).fillna("")
     src = src[src["local_file"] != ""]
-    # smallest documents first: quick feedback on the first runs
     src = src.assign(_size=src["local_file"].map(lambda f: (ROOT / "data/raw" / f).stat().st_size
                                                  if (ROOT / "data/raw" / f).exists() else 0))
     src = src.sort_values("_size")
@@ -47,7 +40,7 @@ def main():
             tests = extract_from_pdf(pdf, meta, use_cache=not args.no_cache)
             rows += [t.model_dump(mode="json") for t in tests]
             print(f"OK   {s['local_file']}: {len(tests)} tests")
-        except Exception as e:  # keep going, report at the end
+        except Exception as e:
             failed.append((s["local_file"], str(e)[:120]))
             print(f"FAIL {s['local_file']}: {e}")
 
@@ -56,7 +49,7 @@ def main():
     df = pd.DataFrame(rows, columns=CSV_COLUMNS)
     df["investigation"] = df["investigation"].map(canonical)
     cat = load_catalog()
-    if not cat.empty:   # link every test to its PSI dataset (PSI asks users to cite it)
+    if not cat.empty:
         links = (cat[cat["acronym"] != ""].drop_duplicates("acronym")
                  .set_index("acronym")[["psi_id", "url"]])
         df["psi_id"] = df["investigation"].map(links["psi_id"]).fillna("")

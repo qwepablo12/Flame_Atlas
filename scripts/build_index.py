@@ -1,5 +1,4 @@
-"""Chunk every PDF in data/sources.csv into data/processed/chunks.jsonl for Q&A search.
-No API calls, runs in seconds:  python scripts/build_index.py"""
+"""Chunk every PDF in data/sources.csv into data/processed/chunks.jsonl for Q&A search."""
 from __future__ import annotations
 
 import json
@@ -10,7 +9,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from flameatlas.parse_pdf import chunk_pages, pdf_pages  # noqa: E402
+from flameatlas.parse_pdf import chunk_pages, pdf_pages
 
 
 def main():

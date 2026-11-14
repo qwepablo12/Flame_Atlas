@@ -1,5 +1,4 @@
-"""Parse a copy-pasted PSI search results page (text) into data/psi_catalog.csv.
-Usage: python scripts/parse_psi_catalog.py path/to/catalog.txt"""
+"""Parse a copy-pasted PSI search results page (text) into data/psi_catalog.csv."""
 import csv
 import re
 import sys

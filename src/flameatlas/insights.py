@@ -1,6 +1,4 @@
-"""The "interpret" part: Claude turns ranked tests + source passages into
-fire-safety insights. Every claim must cite a test id [T0012] or a source [S3].
-Nothing is stated that the provided data does not support."""
+"""The "interpret" part: Claude turns ranked tests + source passages into fire-safety insights."""
 from __future__ import annotations
 
 import json
@@ -54,8 +52,7 @@ def _passages(hits: list[dict]) -> tuple[str, list[dict]]:
 
 
 def mission_insight(top: pd.DataFrame, mission: str, target: dict, client=None) -> dict:
-    """Insight card for the selected crew environment.
-    Returns {"markdown": str, "sources": [...]} ."""
+    """Insight card for the selected crew environment."""
     client = client or _client()
     q = (f"flammability spread extinction oxygen {target.get('o2_percent')} percent pressure "
          f"{target.get('pressure_kpa')} kPa flow {target.get('flow_speed_cm_s')} cm/s {target.get('phase') or ''}")
@@ -104,7 +101,7 @@ Answer in 3-8 sentences or a short list, with citations."""
 
 
 def compare_investigations(df: pd.DataFrame, a: str, b: str, client=None) -> dict:
-    """'How are investigations A and B similar / different?' — a challenge hint."""
+    """Compare two investigations: objectives, fuels, conditions, hardware, results."""
     client = client or _client()
     sub = df[df["investigation"].isin([a, b])]
     passages, refs = _passages(search(f"{a} {b} objective fuel hardware results", k=6))

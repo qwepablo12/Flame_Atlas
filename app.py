@@ -1,5 +1,4 @@
-"""Minimal starter dashboard — the product side owns and replaces this.
-Run: streamlit run app.py"""
+"""FlameAtlas dashboard. Run: streamlit run app.py"""
 import sys
 from pathlib import Path
 
@@ -8,9 +7,9 @@ import plotly.express as px
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
-from flameatlas.missions import MISSIONS  # noqa: E402
-from flameatlas.rank import rank  # noqa: E402
-from flameatlas.ui_ai import render_chat, render_compare, render_insight, render_investigations  # noqa: E402
+from flameatlas.missions import MISSIONS
+from flameatlas.rank import rank
+from flameatlas.ui_ai import render_chat, render_compare, render_insight, render_investigations
 
 DATA = Path("data/processed")
 real, mock = DATA / "experiments.csv", DATA / "experiments_mock.csv"
